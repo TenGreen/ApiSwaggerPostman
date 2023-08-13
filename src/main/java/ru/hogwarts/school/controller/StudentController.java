@@ -21,9 +21,16 @@ public class StudentController {
         return studentService.getAll();
     }
 
+
+
     @GetMapping("/{id}")
     public Student getById(@PathVariable("id") Long id) {
         return studentService.getById(id);
+    }
+
+    @GetMapping("/filtered")
+    public Collection<Student> getByAge(@RequestParam("age") int age) {
+        return studentService.getByAge(age);
     }
 
     @PostMapping
