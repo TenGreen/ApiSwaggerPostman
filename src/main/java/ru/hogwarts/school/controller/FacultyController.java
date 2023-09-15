@@ -22,7 +22,6 @@ public class FacultyController {
     }
 
 
-
     @GetMapping("/{id}")
     public Faculty getById(@PathVariable("id") Long id) {
         return facultyService.getById(id);
@@ -33,7 +32,8 @@ public class FacultyController {
     public Collection<Faculty> getColor(@RequestParam("color") String color) {
         return facultyService.getByColor(color);
     }
-    @GetMapping("/by-color-or-name")
+
+    @GetMapping("/by-search-or-name")
     public Collection<Faculty> getByColorOrName(@RequestParam("color") String search) {
         return facultyService.getByColorOrName(search, search);
     }
@@ -44,7 +44,7 @@ public class FacultyController {
     }
 
     @PutMapping
-    public Faculty update (@PathVariable("id") Long id, @RequestBody Faculty faculty) {
+    public Faculty update(@PathVariable("id") Long id, @RequestBody Faculty faculty) {
         return facultyService.update(id, faculty);
     }
 
