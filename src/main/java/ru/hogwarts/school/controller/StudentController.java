@@ -1,6 +1,5 @@
 package ru.hogwarts.school.controller;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
@@ -32,7 +31,10 @@ public class StudentController {
     public Collection<Student> getByAge(@RequestParam("age") int age) {
         return studentService.getByAge(age);
     }
-
+    @GetMapping("/by-age")
+    public Collection<Student> getByAge(@RequestParam int min, @RequestParam int max) {
+        return studentService.getByAgeBetween(min, max);
+    }
     @PostMapping
     public Student create(@RequestBody Student student) {
         return studentService.create(student);

@@ -44,4 +44,9 @@ public class StudentService {
         Student existingStudent = studentRepository.findById(id).orElseThrow(SecurityException::new);
         studentRepository.delete(existingStudent);
     }
+
+    public Collection<Student> getByAgeBetween(int min, int max) {
+        return studentRepository.findAllByAgeBetween(min, max);
+    }
+
 }

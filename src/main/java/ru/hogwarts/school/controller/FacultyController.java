@@ -9,6 +9,7 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/faculty")
 public class FacultyController {
+    // http://localhost:8080/swagger-ui.html
     private final FacultyService facultyService;
 
     public FacultyController(FacultyService facultyService) {
@@ -31,6 +32,10 @@ public class FacultyController {
     @GetMapping("/filtered")
     public Collection<Faculty> getColor(@RequestParam("color") String color) {
         return facultyService.getByColor(color);
+    }
+    @GetMapping("/by-color-or-name")
+    public Collection<Faculty> getByColorOrName(@RequestParam("color") String search) {
+        return facultyService.getByColorOrName(search, search);
     }
 
     @PostMapping
