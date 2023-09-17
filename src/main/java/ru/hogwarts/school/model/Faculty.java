@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
+
 @Entity
 public class Faculty {
     @Id
@@ -13,7 +14,7 @@ public class Faculty {
     private String name;
     private String color;
     @OneToMany(mappedBy = "faculty")
-            @JsonIgnore
+    @JsonIgnore
     List<Student> students;
 
     public Faculty(long id, String name, String color) {
