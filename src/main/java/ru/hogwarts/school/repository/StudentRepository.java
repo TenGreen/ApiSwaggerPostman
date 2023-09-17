@@ -13,4 +13,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     List<Student> findAllByAgeBetween(int min, int max);
 
+    List<Student> findAllByFaculty_Id(long facultyId);
+
 }

@@ -53,4 +53,8 @@ public class FacultyService {
                 orElseThrow(FacultyNotFoundException::new);
         facultyRepository.delete(faculty);
     }
+
+    public Faculty getByStudentId(Long studentId) {
+        return facultyRepository.findByStudent_Id(studentId).orElseThrow(FacultyNotFoundException::new);
+    }
 }
