@@ -38,12 +38,7 @@ public class FacultyController {
         return facultyService.getByColorOrName(search, search);
     }
 
-    @GetMapping("/by-student")
-    public Faculty getByStudent(@RequestParam Long studentId) {
-        return facultyService.getByStudentId(studentId);
-    }
-
-    @PostMapping
+       @PostMapping
     public Faculty create(@RequestBody Faculty faculty) {
         return facultyService.create(faculty);
     }

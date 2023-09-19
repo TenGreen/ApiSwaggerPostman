@@ -1,6 +1,7 @@
 package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
@@ -50,5 +51,11 @@ public class StudentService {
     }
     public Collection<Student> getByFacultyId(long facultyId) {
         return studentRepository.findAllByFaculty_Id(facultyId);
+    }
+
+    public Faculty findByStudent_Id(Long student_Id) {
+        Student existingStudent = studentRepository.findByStudent_Id(student_Id).
+                orElseThrow(SecurityException::new);
+        return existingStudent.getFaculty();
     }
 }
