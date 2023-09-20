@@ -54,7 +54,7 @@ public class StudentService {
     }
 
     public Faculty findByStudent_Id(Long student_Id) {
-        Student existingStudent = studentRepository.findByStudent_Id(student_Id).
+        Student existingStudent = studentRepository.findAllByStudent_Id(student_Id).
                 orElseThrow(SecurityException::new);
         return existingStudent.getFaculty();
     }

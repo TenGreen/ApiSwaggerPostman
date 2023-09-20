@@ -16,10 +16,11 @@ public class Student {
     private Faculty faculty;
 
 
-    public Student(long id, String name, Integer age) {
+    public Student(long id, String name, Integer age, Faculty faculty) {
         this.id = id;
         this.name = name;
         this.age = age;
+        this.faculty = faculty;
     }
 
     public Student() {
