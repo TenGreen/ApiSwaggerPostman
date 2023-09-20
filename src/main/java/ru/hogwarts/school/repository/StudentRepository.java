@@ -5,7 +5,6 @@ import org.springframework.stereotype.Repository;
 import ru.hogwarts.school.model.Student;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
@@ -15,6 +14,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     List<Student> findAllByAgeBetween(int min, int max);
 
     List<Student> findAllByFaculty_Id(long facultyId);
-    Optional<Student> findAllByStudent_Id(long studentId);
+//    Optional<Student> findByStudent_Id(long studentId);
 
 }

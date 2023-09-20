@@ -12,7 +12,6 @@ public class ApiSwaggerPostmanApplication {
 
 		SpringApplication.run(ApiSwaggerPostmanApplication.class, args);
 
-
 	}
 
 }
