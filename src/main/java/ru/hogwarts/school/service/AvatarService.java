@@ -20,7 +20,10 @@ public class AvatarService {
     @Value("${path.to.avatars.folder}")
     private Path pathToAvatars;
 
-    public AvatarService(AvatarRepository avatarRepository, StudentRepository studentRepository) {
+    public Avatar getById(Long id) {
+        return avatarRepository.findById(id).orElseThrow();
+    }
+    public AvatarService(AvatarRepository avatarRepository, StudentRepository studentRepository, Path pathToAvatars) {
         this.avatarRepository = avatarRepository;
         this.studentRepository = studentRepository;
     }
@@ -47,6 +50,7 @@ public class AvatarService {
     private String saveToDisk(Long studentId, MultipartFile multipartFile) throws IOException {
         Files.createDirectories(pathToAvatars);
         String originalFilename = multipartFile.getOriginalFilename();
+        assert originalFilename != null;
         int dotIndex = originalFilename.lastIndexOf(".");
         String extension = originalFilename.substring(dotIndex);
         String fileName = studentId + extension;
