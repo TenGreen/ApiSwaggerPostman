@@ -23,9 +23,10 @@ public class AvatarService {
     public Avatar getById(Long id) {
         return avatarRepository.findById(id).orElseThrow();
     }
-    public AvatarService(AvatarRepository avatarRepository, StudentRepository studentRepository, Path pathToAvatars) {
+    public AvatarService(AvatarRepository avatarRepository, StudentRepository studentRepository) {
         this.avatarRepository = avatarRepository;
         this.studentRepository = studentRepository;
+//        this.pathToAvatars = pathToAvatars;
     }
 
     public Long save(Long studentId, MultipartFile multipartFile) throws IOException {
