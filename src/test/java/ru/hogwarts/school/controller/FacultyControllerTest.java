@@ -127,9 +127,11 @@ public class FacultyControllerTest {
     }
     @Test
     void byStudent(){
+        String name = "anna";
+        Integer age = 23;
         ResponseEntity<Faculty> response = createFaculty("biologi", "green");
         Faculty faculty = response.getBody();
-        Student student = new Student(null, "anna", 23);
+        Student student = new Student(null, name, age);
         student.setFaculty(faculty);
         ResponseEntity<Student> studentResponse = template.
                  postForEntity("/faculty/student", student, Student.class);
@@ -137,6 +139,12 @@ public class FacultyControllerTest {
         assertThat(studentResponse.getBody().getName()).isEqualTo("anna");
         assertThat(studentResponse.getBody().getAge()).isEqualTo(23);
         assertThat(studentResponse.getBody().getFaculty().getColor()).isEqualTo("green");
+        long studentId = studentResponse.getBody().getId();
+
+        response = template.getForEntity("/faculty//by-student?studentId=" + studentId, Faculty.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody()).isEqualTo(faculty);
 
 
     }
