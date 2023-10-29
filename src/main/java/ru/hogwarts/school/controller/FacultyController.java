@@ -33,12 +33,12 @@ public class FacultyController {
         return facultyService.getByColor(color);
     }
 
-    @GetMapping("/by-search-or-name")
+    @GetMapping("/by-color-or-name")
     public Collection<Faculty> getByColorOrName(@RequestParam("color") String search) {
         return facultyService.getByColorOrName(search, search);
     }
 
-       @PostMapping
+    @PostMapping
     public Faculty create(@RequestBody Faculty faculty) {
         return facultyService.create(faculty);
     }
@@ -53,5 +53,8 @@ public class FacultyController {
         facultyService.delete(id);
     }
 
-
+    @GetMapping("/by-student")
+    public Faculty getByStudent(Long studentId) {
+        return facultyService.getByStudentId(studentId);
+    }
 }
