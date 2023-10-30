@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import ru.hogwarts.school.ApiSwaggerPostmanApplication;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
@@ -21,6 +22,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest(classes = ApiSwaggerPostmanApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+//@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:clear-database.sql")
 public class FacultyControllerTest {
     TestRestTemplate template;
     FacultyRepository facultyRepository;
@@ -32,12 +35,25 @@ public class FacultyControllerTest {
         this.facultyRepository = facultyRepository;
         this.studentRepository = studentRepository;
     }
+//    @Autowired
+//    private DataSource dataSource;
 
-    /*@BeforeTestClass
+//    @Autowired
+//    private JdbcTemplate jdbcTemplate;
+
+//    @BeforeTestMethod
+//    public void setUp() throws Exception {
+//        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+//        populator.addScript(new ClassPathResource("schema.sql"));
+//        populator.addScript(new ClassPathResource("data.sql"));
+//        DatabasePopulatorUtils.execute(populator, dataSource);
+//    }
+
+    @BeforeTestMethod
      void clearDB(){
         facultyRepository.deleteAll();
         studentRepository.deleteAll();
-    }*/
+    }
 
     @Test
     void create() {
