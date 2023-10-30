@@ -53,8 +53,8 @@ public class FacultyController {
         facultyService.delete(id);
     }
 
-//    @GetMapping("/by-student")
-//    public Faculty getByStudent(Long studentId) {
-//        return facultyService.getByStudentId(studentId);
-//    }
+    @GetMapping("/by-student")
+    public Faculty getByStudent( @RequestParam Long studentId) {
+        return facultyService.getByStudentId(studentId);
+    }
 }

@@ -2,9 +2,12 @@ package ru.hogwarts.school.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.hogwarts.school.exception.DataNotFoundExceptions;
 import ru.hogwarts.school.exception.FacultyNotFoundException;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
+import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -14,9 +17,11 @@ public class FacultyService {
 
 
     private final FacultyRepository facultyRepository;
+    private final StudentRepository studentRepository;
     @Autowired
-    public FacultyService(FacultyRepository facultyRepository) {
+    public FacultyService(FacultyRepository facultyRepository, StudentRepository studentRepository) {
         this.facultyRepository = facultyRepository;
+        this.studentRepository = studentRepository;
     }
 
     public Faculty getById(Long id) {
@@ -54,8 +59,10 @@ public class FacultyService {
         facultyRepository.delete(faculty);
     }
 
-//    public Faculty getByStudentId(Long studentId) {
-//        Optional<Student> getStudent = facultyRepository.findByStudent_Id(studentId);
-//        return getStudent.orElseThrow(FacultyNotFoundException::new).getFaculty();
-//    }
+    public Faculty getByStudentId(Long studentId) {
+        Student student = studentRepository.findById(studentId).orElseThrow(DataNotFoundExceptions::new);
+        return facultyRepository.findByStudentsContaining(student)
+                .orElseThrow(FacultyNotFoundException::new);
+        //return student.getFaculty();
+    }
 }

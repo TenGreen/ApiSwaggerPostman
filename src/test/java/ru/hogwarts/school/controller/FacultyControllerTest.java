@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import ru.hogwarts.school.ApiSwaggerPostmanApplication;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
@@ -21,20 +22,22 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @SpringBootTest(classes = ApiSwaggerPostmanApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class FacultyControllerTest {
-    @Autowired
     TestRestTemplate template;
-
-
-    @Autowired
     FacultyRepository facultyRepository;
-    @Autowired
     StudentRepository studentRepository;
 
     @Autowired
-    void clearDb() {
-        studentRepository.deleteAll();
-        facultyRepository.deleteAll();
+    public FacultyControllerTest(TestRestTemplate template, FacultyRepository facultyRepository, StudentRepository studentRepository) {
+        this.template = template;
+        this.facultyRepository = facultyRepository;
+        this.studentRepository = studentRepository;
     }
+
+    /*@BeforeTestClass
+     void clearDB(){
+        facultyRepository.deleteAll();
+        studentRepository.deleteAll();
+    }*/
 
     @Test
     void create() {
@@ -136,29 +139,29 @@ public class FacultyControllerTest {
         Map<String, String> next = (HashMap)response.getBody().iterator().next();
         assertThat(next.get("color")).isEqualTo("green");
     }
-//    @Test
-//    void byStudent(){
-//        String name = "anna";
-//        Integer age = 23;
-//        ResponseEntity<Faculty> response = createFaculty("biologi", "green");
-//        Faculty faculty = response.getBody();
-//        Student student = new Student(null, name, age);
-//        student.setFaculty(faculty);
-//        ResponseEntity<Student> studentResponse = template.
-//                 postForEntity("/faculty/student", student, Student.class);
-//        assertThat(studentResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        assertThat(studentResponse.getBody().getName()).isEqualTo("anna");
-//        assertThat(studentResponse.getBody().getAge()).isEqualTo(23);
-//        assertThat(studentResponse.getBody().getFaculty().getColor()).isEqualTo("green");
-//        long studentId = studentResponse.getBody().getId();
-//
-//        response = template.getForEntity("/faculty//by-student?studentId=" + studentId, Faculty.class);
-//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        assertThat(response.getBody()).isNotNull();
-//        assertThat(response.getBody()).isEqualTo(faculty);
-//
-//
-//    }
+    @Test
+    void byStudent(){
+        String name = "anna";
+        Integer age = 23;
+        ResponseEntity<Faculty> response = createFaculty("biologi", "green");
+        Faculty faculty = response.getBody();
+        Student student = new Student(null, name, age);
+        student.setFaculty(faculty);
+        ResponseEntity<Student> studentResponse = template.
+                 postForEntity("/faculty/student", student, Student.class);
+        assertThat(studentResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(studentResponse.getBody().getName()).isEqualTo("anna");
+        assertThat(studentResponse.getBody().getAge()).isEqualTo(23);
+        assertThat(studentResponse.getBody().getFaculty().getColor()).isEqualTo("green");
+        long studentId = studentResponse.getBody().getId();
+
+        response = template.getForEntity("/faculty//by-student?studentId=" + studentId, Faculty.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody()).isEqualTo(faculty);
+
+
+    }
     private ResponseEntity<Faculty> createFaculty(String name, String color) {
         ResponseEntity<Faculty> response = template.postForEntity("/faculty",
                 new Faculty(null, name, color),
