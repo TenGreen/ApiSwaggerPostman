@@ -4,15 +4,20 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
+import org.springframework.test.context.jdbc.Sql;
 import ru.hogwarts.school.ApiSwaggerPostmanApplication;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,7 +28,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @SpringBootTest(classes = ApiSwaggerPostmanApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-//@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:clear-database.sql")
+@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:clear-database.sql")
 public class FacultyControllerTest {
     TestRestTemplate template;
     FacultyRepository facultyRepository;
@@ -35,20 +40,20 @@ public class FacultyControllerTest {
         this.facultyRepository = facultyRepository;
         this.studentRepository = studentRepository;
     }
-//    @Autowired
-//    private DataSource dataSource;
+    @Autowired
+    private DataSource dataSource;
 
 //    @Autowired
 //    private JdbcTemplate jdbcTemplate;
 
-//    @BeforeTestMethod
-//    public void setUp() throws Exception {
-//        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-//        populator.addScript(new ClassPathResource("schema.sql"));
-//        populator.addScript(new ClassPathResource("data.sql"));
-//        DatabasePopulatorUtils.execute(populator, dataSource);
-//    }
 
+    @BeforeTestMethod
+    public ResponseEntity<Faculty> setUp() throws Exception {
+        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.addScript(new ClassPathResource("clear-database.sql"));
+//        populator.addScript(new ClassPathResource("data.sql"));
+        DatabasePopulatorUtils.execute(populator, dataSource);
+    }
     @BeforeTestMethod
      void clearDB(){
         facultyRepository.deleteAll();
@@ -159,7 +164,7 @@ public class FacultyControllerTest {
     void byStudent(){
         String name = "anna";
         Integer age = 23;
-        ResponseEntity<Faculty> response = createFaculty("biologi", "green");
+        ResponseEntity<Faculty> response = createFaculty ("biologi", "green");
         Faculty faculty = response.getBody();
         Student student = new Student(null, name, age);
         student.setFaculty(faculty);
@@ -178,7 +183,8 @@ public class FacultyControllerTest {
 
 
     }
-    private ResponseEntity<Faculty> createFaculty(String name, String color) {
+
+    private ResponseEntity<Faculty> createFaculty (String name, String color) {
         ResponseEntity<Faculty> response = template.postForEntity("/faculty",
                 new Faculty(null, name, color),
                 Faculty.class);
