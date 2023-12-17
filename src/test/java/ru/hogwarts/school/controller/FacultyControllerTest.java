@@ -1,19 +1,17 @@
 package ru.hogwarts.school.controller;
 
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.test.context.event.annotation.BeforeTestMethod;
-import org.springframework.test.context.jdbc.Sql;
 import ru.hogwarts.school.ApiSwaggerPostmanApplication;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.AvatarRepository;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
@@ -28,17 +26,20 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @SpringBootTest(classes = ApiSwaggerPostmanApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:clear-database.sql")
+//@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:clear-database.sql")
 public class FacultyControllerTest {
     TestRestTemplate template;
     FacultyRepository facultyRepository;
     StudentRepository studentRepository;
+    @Autowired
+    AvatarRepository avatarRepository;
 
     @Autowired
     public FacultyControllerTest(TestRestTemplate template, FacultyRepository facultyRepository, StudentRepository studentRepository) {
         this.template = template;
         this.facultyRepository = facultyRepository;
         this.studentRepository = studentRepository;
+
     }
     @Autowired
     private DataSource dataSource;
@@ -47,17 +48,18 @@ public class FacultyControllerTest {
 //    private JdbcTemplate jdbcTemplate;
 
 
-    @BeforeTestMethod
-    public ResponseEntity<Faculty> setUp() throws Exception {
-        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(new ClassPathResource("clear-database.sql"));
-//        populator.addScript(new ClassPathResource("data.sql"));
-        DatabasePopulatorUtils.execute(populator, dataSource);
-    }
-    @BeforeTestMethod
+//    @BeforeTestMethod
+//    public ResponseEntity<Faculty> setUp() throws Exception {
+//        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+//        populator.addScript(new ClassPathResource("clear-database.sql"));
+//       populator.addScript(new ClassPathResource("data.sql"));
+//        DatabasePopulatorUtils.execute(populator, dataSource);
+//    }
+    @BeforeEach
      void clearDB(){
-        facultyRepository.deleteAll();
+        avatarRepository.deleteAll();
         studentRepository.deleteAll();
+        facultyRepository.deleteAll();
     }
 
     @Test
@@ -145,6 +147,22 @@ public class FacultyControllerTest {
     }
 
     @Test
+    void getByColor() {
+        createFaculty("math", "red");
+        createFaculty("history", "green");
+
+        ResponseEntity<ArrayList> response = template.
+                getForEntity("/faculty/filtered?color=red",
+                        ArrayList.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().size()).isEqualTo(1);
+        Map<String, String> next = (HashMap)response.getBody().iterator().next();
+        assertThat(next.get("color")).isEqualTo("red");
+    }
+
+    @Test
     void getColor() {
         createFaculty("math", "red");
         createFaculty("history", "green");
@@ -161,7 +179,7 @@ public class FacultyControllerTest {
         assertThat(next.get("color")).isEqualTo("green");
     }
     @Test
-    void byStudent(){
+    void getByStudent(){
         String name = "anna";
         Integer age = 23;
         ResponseEntity<Faculty> response = createFaculty ("biologi", "green");
@@ -169,7 +187,7 @@ public class FacultyControllerTest {
         Student student = new Student(null, name, age);
         student.setFaculty(faculty);
         ResponseEntity<Student> studentResponse = template.
-                 postForEntity("/faculty/student", student, Student.class);
+                 postForEntity("/student", student, Student.class);
         assertThat(studentResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(studentResponse.getBody().getName()).isEqualTo("anna");
         assertThat(studentResponse.getBody().getAge()).isEqualTo(23);
